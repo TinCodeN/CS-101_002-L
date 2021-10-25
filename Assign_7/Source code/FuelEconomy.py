@@ -1,4 +1,4 @@
-################################################################################
+########################################################################
 ## CS 101 Lab
 ## Program Lab Week 8
 ## Date : Fall 2021
@@ -12,14 +12,17 @@
 ##           the values are separated by the tab character \t. 
 ##           There are many ways to split this string data.
 ##
-## Algorithm: The program will need to ask the user for a minimum fuel economy, 
+## Algorithm: The rogram will need to ask the user for a minimum fuel economy, 
 ##            and be able to handle non float data being entered.  
 ##            It should continually ask for a correct value.  
 ##            It should also make sure they don’t enter a value less than 
 ##            or equal to zero or greater than 100.  The program will ask for an input
 ##            file and should loop until the user gives a valid file that can be opened
 ##
-##################################################################################
+##
+##
+from os.path import exists
+
 
 def get_minimum_mpg():
     while True:
@@ -37,28 +40,30 @@ def get_minimum_mpg():
 def get_input_file():
     while True:
         file_name=input('Enter the name of the input vehicle file ==> ')
-        try:
-            with open(file_name,'r') as read_file:
+        if exists(file_name):
+            with open(file_name) as read_file:
                 return [[data.strip() for data in line.strip().split('\t')] for line in read_file.readlines()]
 
-        except:
+        else:
             print('Could not open file',file_name)
 
 
 def write_to_file(min_mileage,file_data):
     while True:
-        try:
-            file_name = input('Enter the name of the file to output to ==> ')
+        file_name = input('Enter the name of the file to output to ==> ')
+        if exists(file_name):
             with open(file_name,'w') as write_file:
                 for data in file_data:
                     try:
-                        if min_mileage>=float(data[7]):
+                        if min_mileage >= float(data[7]):
                             write_file.write('{0:<5}{1:<40}{2:<40}{3:>10}\n'.format(data[0],\
                             data[1],data[2],data[7]))
-                    except:
-                        print('Could not convert value invalid for vehicle',data[0],data[1],data[2])
-        except:
+                            
+                    except ValueError:
+                        print('Could not convert value {} for vehicle {} {} {}'.format(data[7],data[0],data[1],data[2]))
+        else:
             print('There is an IO Error',file_name)
+        break
 
 
 def main():
